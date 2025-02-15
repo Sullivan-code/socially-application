@@ -7,7 +7,15 @@ import {
 import { notFound } from "next/navigation";
 import ProfilePageClient from "./ProfilePageClient";
 
-export async function generateMetadata({ params }: { params: { username: string } }) {
+// Explicitly defining MyPageProps type to avoid conflicts
+interface MyPageProps {
+  params: {
+    username: string;
+  };
+}
+
+// Use MyPageProps for the function signatures
+export async function generateMetadata({ params }: MyPageProps) {
   const user = await getProfileByUsername(params.username);
   if (!user) return;
 
@@ -17,9 +25,9 @@ export async function generateMetadata({ params }: { params: { username: string 
   };
 }
 
-async function ProfilePageServer({ params }: { params: { username: string } }) {
+// Use MyPageProps for ProfilePageServer to ensure the type is correct
+async function ProfilePageServer({ params }: MyPageProps) {
   const user = await getProfileByUsername(params.username);
-
   if (!user) notFound();
 
   const [posts, likedPosts, isCurrentUserFollowing] = await Promise.all([
@@ -37,4 +45,5 @@ async function ProfilePageServer({ params }: { params: { username: string } }) {
     />
   );
 }
+
 export default ProfilePageServer;
